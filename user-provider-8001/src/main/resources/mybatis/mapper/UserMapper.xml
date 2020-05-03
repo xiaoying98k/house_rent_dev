@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yt.houserent.userprovider8001.dao.UserDao">
+    <!--查询条件-->
+    <sql id="SQL_CONDITION">
+        <if test="id !=null and id !='' ">
+        and id=#{id}
+        </if>
+        <if test="name !=null and name !='' ">
+            and name=#{name}
+        </if>
+        <if test="nickname !=null and nickname !='' ">
+            and nickname=#{nickname}
+        </if>
+        <if test="password !=null and password !='' ">
+            and password=#{password}
+        </if>
+        <if test="type !=null and type !='' ">
+            and type=#{type}
+        </if>
+        <if test="money !=null and money !='' ">
+            and money=#{money}
+        </if>
+        <if test="payPwd !=null and payPwd !='' ">
+            and pay_pwd=#{payPwd}
+        </if>
+        <if test="phone !=null and phone !='' ">
+            and phone=#{phone}
+        </if>
+        <if test="deletedFlag !=null and deletedFlag !='' ">
+            and deleted_flag=#{deletedFlag}
+        </if>
+    </sql>
+
+    <!--2.查询内容-->
+    <sql id="SQL_CONTENT">
+		id id,
+		name name,
+		nickname nickname,
+		password password,
+		type type,
+		money money,
+		pay_pwd payPwd,
+		phone phone,
+		deleted_flag deletedFlag
+	</sql>
+
+    <!--1.根据ID查询记录-->
+    <select id="findUserById" parameterType="int"  resultType="com.api.entities.User" >
+        SELECT
+        <include refid="SQL_CONTENT"/>
+        FROM user
+        WHERE deleted_flag= 'N' AND  id = #{id}
+    </select>
+
+    <!--2.查询所有用户-->
+    <select id="findAll"   resultType="com.api.entities.User" >
+        SELECT
+        <include refid="SQL_CONTENT"/>
+        FROM user
+        WHERE deleted_flag= 'N'
+    </select>
+
+    <!--3.根据VO查询符合条件的用户-->
+    <select id="searchListByVO" parameterType="com.api.entities.User" resultType="com.api.entities.User">
+        select
+        <include refid="SQL_CONTENT"/>
+        from user where 1=1
+        <include refid="SQL_CONDITION"/> order by user.id desc
+    </select>
+
+    <!--4.添加用户-->
+    <insert id="addUser" parameterType="com.api.entities.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO  user(name ,nickname,password,type,money,pay_pwd,phone,deleted_flag)
+                  VALUES(#{name},#{nickname},#{password},#{type},#{money},#{payPwd},#{phone},'N')
+    </insert>
+
+    <!--5.删除用户-->
+    <update id="deleteUserById"  parameterType="int">
+		UPDATE  user  SET deleted_flag = 'Y'  WHERE 1=1   AND id = #{id}
+	</update>
+
+    <update id="updateByVO"  parameterType="com.api.entities.User">
+		UPDATE  user
+        <set>
+            <if test="id!= null">id=#{id},</if>
+            <if test="name != null">name=#{name},</if>
+            <if test="nickname != null">nickname=#{nickname},</if>
+            <if test="password != null">password=#{password},</if>
+            <if test="type != null">type=#{type},</if>
+            <if test="money != null">money=#{money},</if>
+            <if test="payPwd != null">pay_pwd=#{payPwd},</if>
+            <if test="phone != null">phone=#{phone},</if>
+            <if test="deletedFlag != null">deleted_flag=#{deletedFlag}</if>
+        </set>
+        WHERE  id = #{id}
+	</update>
+
+    <update id="updateForPay">
+        UPDATE  user set money=money-#{money} where id=#{payer};
+        UPDATE  user set money=money+#{money} where id=#{payee};
+    </update>
+
+</mapper>

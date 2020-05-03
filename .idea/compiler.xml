@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="eureka-server-7001" />
+        <module name="house-provider-8002" />
+        <module name="house-rent-api" />
+        <module name="house-rent-consumer-80" />
+        <module name="order-provider-8005" />
+        <module name="rent-provider-8004" />
+        <module name="repair-provider-8003" />
+        <module name="tx-manager" />
+        <module name="user-provider-8001" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="eureka-server-7001" options="-parameters" />
+      <module name="house-provider-8002" options="-parameters" />
+      <module name="house-rent-api" options="-parameters" />
+      <module name="house-rent-consumer-80" options="-parameters" />
+      <module name="order-provider-8005" options="-parameters" />
+      <module name="rent-provider-8004" options="-parameters" />
+      <module name="repair-provider-8003" options="-parameters" />
+      <module name="tx-manager" options="-parameters" />
+      <module name="user-provider-8001" options="-parameters" />
+    </option>
+  </component>
+</project>

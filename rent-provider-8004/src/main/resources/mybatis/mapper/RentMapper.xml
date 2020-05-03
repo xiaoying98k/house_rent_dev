@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yt.houserent.rentprovider8004.dao.RentDao">
+    <!--查询条件-->
+    <sql id="SQL_CONDITION">
+        <if test="id !=null and id !='' ">
+        and id=#{id}
+        </if>
+        <if test="rentId !=null and rentId !='' ">
+            and rent_id=#{rentId}
+        </if>
+        <if test="ownerId !=null and ownerId !='' ">
+            and owner_id=#{ownerId}
+        </if>
+        <if test="houseId !=null and houseId !='' ">
+            and house_id=#{houseId}
+        </if>
+        <if test="rental !=null and rental !='' ">
+            and rental=#{rental}
+        </if>
+        <if test="deposit !=null and deposit !='' ">
+            and deposit=#{deposit}
+        </if>
+        <if test="rentTime !=null and rentTime !='' ">
+            and rent_time=#{rentTime}
+        </if>
+        <if test="tenancy !=null and tenancy !='' ">
+            and tenancy=#{tenancy}
+        </if>
+        <if test="water !=null and water !='' ">
+            and water=#{water}
+        </if>
+        <if test="power !=null and power !='' ">
+            and power=#{power}
+        </if>
+        <if test="urge !=null and urge !='' ">
+            and urge=#{urge}
+        </if>
+        <if test="state !=null and state !='' ">
+            and state=#{state}
+        </if>
+        <if test="deletedFlag !=null and deletedFlag !='' ">
+            and deleted_flag=#{deletedFlag}
+        </if>
+    </sql>
+
+    <!--查询内容-->
+    <sql id="SQL_CONTENT">
+		id id,
+		rent_id rentId,
+		owner_id ownerId,
+		house_id houseId,
+		rent_time rentTime,
+		tenancy tenancy,
+		rental rental,
+		deposit deposit,
+		water water,
+		power power,
+		urge urge,
+		state state,
+		deleted_flag deletedFlag
+	</sql>
+
+    <!--1.根据ID查询记录-->
+    <select id="findRentById" parameterType="int"  resultType="com.api.entities.Rent" >
+        SELECT
+        <include refid="SQL_CONTENT"/>
+        FROM rent
+        WHERE deleted_flag= 'N' AND  id = #{id}
+    </select>
+
+    <!--2.查询所有维修记录-->
+    <select id="findAll"   resultType="com.api.entities.Rent" >
+        SELECT
+        <include refid="SQL_CONTENT"/>
+        FROM rent
+        WHERE deleted_flag= 'N'
+    </select>
+
+
+    <!--3.根据租户ID查询记录-->
+    <select id="searchListByRentId" parameterType="int"  resultType="com.api.entities.Rent" >
+        SELECT
+        <include refid="SQL_CONTENT"/>
+        FROM rent
+        WHERE deleted_flag= 'N' AND  rent_id = #{rentId} order by rent.id desc
+    </select>
+
+    <!--4.根据房东ID查询记录-->
+    <select id="searchListByOwnerId" parameterType="int"  resultType="com.api.entities.Rent" >
+        SELECT
+        <include refid="SQL_CONTENT"/>
+        FROM rent
+        WHERE deleted_flag= 'N' AND  owner_id= #{ownerId} order by rent.id desc
+    </select>
+
+
+    <insert id="addRent" parameterType="com.api.entities.Rent" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO  rent(house_id ,rent_id,owner_id,rental,rent_time,tenancy,deposit,urge,state,deleted_flag)
+                  VALUES(#{houseId},#{rentId},#{ownerId},#{rental},NOW(),#{tenancy},#{deposit},'N',#{state},'N')
+    </insert>
+
+    <!--5.删除维修记录-->
+    <update id="deleteRentById"  parameterType="int">
+		UPDATE  rent  SET deleted_flag = 'Y'  WHERE 1=1   AND id = #{id}
+	</update>
+
+    <!--6.删除房子所有维修记录-->
+    <update id="deleteRentByHouseId"  parameterType="int">
+		UPDATE  rent  SET deleted_flag = 'Y'  WHERE 1=1   AND house_id = #{houseId}
+	</update>
+
+    <update id="updateByVO"  parameterType="com.api.entities.Rent">
+		UPDATE  rent
+        <set>
+            <if test="id!= null and id !=0">id=#{id},</if>
+            <if test="houseId != null and houseId !=0">house_id=#{houseId},</if>
+            <if test="rentId != null and rentId !=0">rent_id=#{rentId},</if>
+            <if test="ownerId != null and rentId !=0">owner_id=#{ownerId},</if>
+            <if test="rental != null">rental=rental+#{rental},</if>
+            <if test="rentTime != null">rent_time=#{rentTime},</if>
+            <if test="tenancy != null">tenancy=#{tenancy},</if>
+            <if test="deposit != null">deposit=#{deposit},</if>
+            <if test="water != null">water=#{water},</if>
+            <if test="power != null">power=#{power},</if>
+            <if test="urge != null">urge=#{urge},</if>
+            <if test="state != null">state=#{state},</if>
+            <if test="deletedFlag != null">deleted_flag=#{deletedFlag}</if>
+        </set>
+        WHERE  id = #{id}
+	</update>
+
+</mapper>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yt.houserent.houseprovider8002.dao.HouseDao">
+    <!--查询条件-->
+    <sql id="SQL_CONDITION">
+        <if test="id !=null and id !='' ">
+        and id=#{id}
+        </if>
+        <if test="ownerId !=null and ownerId !='' ">
+            and owner_id=#{ownerId}
+        </if>
+        <if test="number !=null and number !='' ">
+            and number=#{number}
+        </if>
+        <if test="houseType !=null and houseType !='' ">
+            and house_type=#{houseType}
+        </if>
+        <if test="image !=null and image !='' ">
+            and image=#{image}
+        </if>
+        <if test="location !=null and location !='' ">
+            and location=#{location}
+        </if>
+        <if test="renting !=null and renting !='' ">
+            and renting=#{renting}
+        </if>
+        <if test="price !=null and price !='' ">
+            and price=#{price}
+        </if>
+        <if test="deposit !=null and deposit !='' ">
+            and deposit=#{deposit}
+        </if>
+        <if test="count !=null and count !='' ">
+            and count=#{count}
+        </if>
+        <if test="rentType !=null and rentType !='' ">
+            and rent_type=#{rentType}
+        </if>
+        <if test="timeType !=null and timeType !='' ">
+            and time_type=#{timeType}
+        </if>
+        <if test="area !=null and area !='' ">
+            and area=#{area}
+        </if>
+        <if test="label !=null and label !='' ">
+            and label=#{label}
+        </if>
+        <if test="houseDesc !=null and houseDesc !='' ">
+            and houseDesc=#{houseDesc}
+        </if>
+        <if test="deletedFlag !=null and deletedFlag !='' ">
+            and deleted_flag=#{deletedFlag}
+        </if>
+    </sql>
+
+    <!--2.查询内容-->
+    <sql id="SQL_CONTENT">
+		id id,
+		owner_id ownerId,
+		number number,
+		house_type houseType,
+		image image,
+		location location,
+		renting renting,
+		price price,
+		deposit deposit,
+		count count,
+        rent_type rentType,
+        time_type timeType,
+        area area,
+        label label,
+        house_desc houseDesc,
+		deleted_flag deletedFlag
+	</sql>
+
+    <!--1.根据ID查询记录-->
+    <select id="findHouseByOwnerId" parameterType="int"  resultType="com.api.entities.House" >
+        SELECT
+        <include refid="SQL_CONTENT"/>
+        FROM house
+        WHERE deleted_flag= 'N'
+        <if test="renting != null and renting!=0">and renting=#{renting}</if>
+        AND  owner_id = #{ownerId}
+    </select>
+
+    <select id="findHouseById" parameterType="int"  resultType="com.api.entities.House" >
+        SELECT
+        <include refid="SQL_CONTENT"/>
+        FROM house
+        WHERE deleted_flag= 'N' AND  id = #{id}
+    </select>
+
+    <!--2.查询所有用户-->
+    <select id="findAll"   resultType="com.api.entities.House" >
+        SELECT
+        <include refid="SQL_CONTENT"/>
+        FROM house
+        WHERE deleted_flag= 'N'
+    </select>
+
+    <!--3.根据VO查询符合条件的用户-->
+    <select id="searchListByVO" parameterType="com.api.entities.House" resultType="com.api.entities.House">
+        select
+        <include refid="SQL_CONTENT"/>
+        from house where 1=1
+        <include refid="SQL_CONDITION"/>
+         order by house.id desc
+    </select>
+
+
+    <select id="findHouseBySearch" parameterType="java.util.Map" resultType="com.api.entities.House">
+        select
+        <include refid="SQL_CONTENT"/>
+        from house where 1=1
+        <if test="searchMap.houseType !=null and searchMap.houseType !='' ">
+            and house_type=#{searchMap.houseType}
+        </if>
+        <if test="searchMap.location !=null and searchMap.location !='' ">
+            and location=#{searchMap.location}
+        </if>
+        <if test="searchMap.rentType !=null and searchMap.rentType !='' ">
+            and rent_type=#{searchMap.rentType}
+        </if>
+        <if test="searchMap.timeType !=null and searchMap.timeType !='' ">
+            and time_type=#{searchMap.timeType}
+        </if>
+        <if test="searchMap.minPrice !=null and searchMap.minPrice !='' and searchMap.maxPrice !=null and searchMap.maxPrice !=''">
+            and price between #{searchMap.minPrice} and #{searchMap.maxPrice}
+        </if>
+         order by house.count desc
+    </select>
+
+    <!--模糊查询-->
+    <select id="fuzzySearch" parameterType="java.lang.String" resultType="com.api.entities.House">
+        select
+        <include refid="SQL_CONTENT"/>
+        from house where 1=1
+        <if test="locationAndNumber!=null and locationAndNumber !='' ">
+            and
+            (
+                location  LIKE CONCAT('%',#{locationAndNumber},'%')
+                OR
+                number LIKE CONCAT('%',#{locationAndNumber},'%')
+              )
+        </if>
+        order by house.count desc
+    </select>
+
+    <!--4.添加用户-->
+    <insert id="addHouse" parameterType="com.api.entities.House" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO  house(owner_id,number,house_type,image,location,renting,price,deposit,count,rent_type,time_type,area,label,house_desc,deleted_flag)
+                  VALUES(#{ownerId},#{number},#{houseType},#{image},#{location},#{renting},#{price},#{deposit},#{count},#{rentType},#{timeType},#{area},#{label},#{houseDesc},'N')
+    </insert>
+
+    <!--5.删除用户-->
+    <update id="deleteHouseById"  parameterType="int">
+		UPDATE  house  SET deleted_flag = 'Y'  WHERE 1=1   AND id = #{id}
+	</update>
+
+    <update id="updateByVO"  parameterType="com.api.entities.House">
+		UPDATE  house
+        <set>
+            <if test="id!= null and id!=0">id=#{id},</if>
+            <if test="ownerId != null and ownerId!=0">owner_id=#{ownerId},</if>
+            <if test="number != null">number=#{number},</if>
+            <if test="houseType != null">house_type=#{houseType},</if>
+            <if test="image != null">image=#{image},</if>
+            <if test="location != null">location=#{location},</if>
+            <if test="renting != null and renting!=0">renting=#{renting},</if>
+            <if test="price != null">price=#{price},</if>
+            <if test="deposit != null">deposit=#{deposit},</if>
+            <if test="count != null and count!=0">count=#{count},</if>
+            <if test="rentType != null">rent_type=#{rentType},</if>
+            <if test="area != null and area!=0">area=#{area},</if>
+            <if test="timeType != null">time_type=#{timeType},</if>
+            <if test="label != null">label=#{label},</if>
+            <if test="houseDesc != null">house_desc=#{houseDesc},</if>
+            <if test="deletedFlag != null">deleted_flag=#{deletedFlag}</if>
+        </set>
+        WHERE  id = #{id}
+	</update>
+
+</mapper>

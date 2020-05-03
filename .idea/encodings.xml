@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" addBOMForNewFiles="with NO BOM">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eureka-server-7001" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/house-provider-8002" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/house-rent-api" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/house-rent-consumer-80" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/order-provider-8005" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rent-provider-8004" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/repair-provider-8003" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tx-manager" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/user-provider-8001" charset="UTF-8" />
+  </component>
+</project>

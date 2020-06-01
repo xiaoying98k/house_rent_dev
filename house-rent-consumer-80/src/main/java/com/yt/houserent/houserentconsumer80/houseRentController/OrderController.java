@@ -24,25 +24,40 @@ public class OrderController {
 
     protected static final Logger log= LoggerFactory.getLogger(OrderController.class);
     @RequestMapping(value = "/orders/add",method = RequestMethod.POST)
-    public boolean add(@RequestBody Orders order){
+    public BackEndResp add(@RequestBody Orders order){
         log.info("用户开始添加预定单");
-        boolean flag=false;
+        BackEndResp backEndResp=BackEndResp.build();
         try{
+            log.info("step1:查询用户是否已经预定过该房源");
+            List<Orders> orderList=this.orderServiceClient.getOrderListByRentId(order.getRentId());
+            for (Orders orders:orderList){
+                if (orders.getHouseId()==order.getHouseId()){
+                    log.info("该用户已预定过该房源");
+                    backEndResp.setRespCode(backEndResp.SUCCESS);
+                    backEndResp.setRespMsg("您已预定过该房源");
+                    return backEndResp;
+                }
+            }
             int count=this.orderServiceClient.add(order);
             if (count>0){
                 log.info("创建预定单成功");
-                flag=true;
                 Map<String,Object>  map=new HashMap<>();
                 map.put("title","预订单消息");
                 map.put("message","您收到新的待处理预订单");
                 webSocketServer.sendOneMessage(String.valueOf(order.getOwnerId()), JSON.toJSONString(map));
+                backEndResp.setRespCode(backEndResp.SUCCESS);
+                backEndResp.setRespMsg("预定成功");
             }else {
                 log.info("创建预定单失败");
+                backEndResp.setRespCode(backEndResp.FAIL);
+                backEndResp.setRespMsg("创建预定单失败！");
             }
         }catch (Exception e){
             log.error("创建预定单出错");
+            backEndResp.setRespCode(backEndResp.FAIL);
+            backEndResp.setRespMsg("系统创建预定单出错！");
         }
-        return flag;
+        return backEndResp;
     }
 
     @RequestMapping(value = "/orders/get/{id}",method = RequestMethod.GET)

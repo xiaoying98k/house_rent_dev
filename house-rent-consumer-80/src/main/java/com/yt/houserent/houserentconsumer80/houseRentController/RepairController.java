@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,18 +29,20 @@ public class RepairController {
     @RequestMapping(value = "/repair/add",method = RequestMethod.POST)
     public BackEndResp add(@RequestBody Repair repair){
         repair.setState("待维修");
-        int count=this.repairServiceClient.add(repair);
+        int key=this.repairServiceClient.add(repair);
+        log.info("增加的主键key:"+key);
         BackEndResp backEndResp=BackEndResp.build();
         log.info("用户提交维修申请");
-        if (count>0){
-            log.info("系统已成功保存维修记录");
+        if (key>0){
+            log.info("系统已成功保存维修记录id:"+key);
             backEndResp.setRespCode(backEndResp.SUCCESS);
             backEndResp.setRespMsg("维修申请提交成功");
             Map<String,Object> map=new HashMap<>();
             map.put("title","物品报修申请");
             map.put("message",repair.getGoodsDesc());
             map.put("houseNumber",repair.getHouseNumber());
-            map.put("time",repair.getTime());
+            map.put("id",key);
+            map.put("time",new SimpleDateFormat("MM-dd hh:mm").format(new Date()));
             webSocketServer.sendOneMessage(String.valueOf(repair.getOwnerId()), JSON.toJSONString(map));
         }else {
             backEndResp.setRespCode(backEndResp.FAIL);

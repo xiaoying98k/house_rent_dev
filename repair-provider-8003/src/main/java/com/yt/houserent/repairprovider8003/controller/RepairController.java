@@ -15,7 +15,10 @@ public class RepairController {
 
     @RequestMapping(value = "/repair/add",method = RequestMethod.POST)
     public int add(@RequestBody Repair repair){
-        return repairService.addRepair(repair);
+        repairService.addRepair(repair);
+        int key=repair.getId();
+        System.out.println(key);
+        return key;
     }
 
     @RequestMapping(value = "/repair/get/{id}",method = RequestMethod.GET)

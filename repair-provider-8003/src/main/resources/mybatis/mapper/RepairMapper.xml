@@ -83,8 +83,8 @@
 
     <!--4.添加维修记录-->
     <insert id="addRepair" parameterType="com.api.entities.Repair" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO  repair(house_id ,rent_id,owner_id,state,time,house_number,goods_desc,deleted_flag)
-                  VALUES(#{houseId},#{rentId},#{ownerId},#{state},NOW(),#{houseNumber},#{goodsDesc},'N')
+        INSERT INTO  repair(id,house_id ,rent_id,owner_id,state,time,house_number,goods_desc,deleted_flag)
+                  VALUES(#{id},#{houseId},#{rentId},#{ownerId},#{state},NOW(),#{houseNumber},#{goodsDesc},'N')
     </insert>
 
     <!--5.删除维修记录-->
